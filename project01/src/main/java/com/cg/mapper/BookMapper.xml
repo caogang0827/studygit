@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cg.mapper.BookDao">
+
+	<resultMap type="book" id="bookMap">
+		<id property="bid" column="bid"/>
+		<result property="bname" column="bname"/>
+		<result property="bauthor" column="bauthor"/>
+		<result property="bpopular" column="bpopular"/>
+		<association property="type" javaType="com.cg.entity.Type">
+		<id property="tid" column="tid"/>
+		<result property="tname" column="tname"/>
+		</association>
+	</resultMap>
+
+	<select id="selectOneUser" parameterType="user" resultType="user">
+		select * from t_user where uname=#{uname} and pwd=#{pwd}
+	</select>
+	
+	<select id="selectAllBook" resultMap="bookMap">
+		select b.*,t.*,COUNT(u.uname) bpopular from t_book b 
+		LEFT JOIN t_type t on b.tid=t.tid
+		LEFT JOIN user_middel_book m ON m.bid=b.bid
+		LEFT JOIN t_user u ON m.uid=u.uid
+		<where>
+			<if test="iname != null and iname != ''">
+				and bname like CONCAT("%",#{iname},"%")
+			</if>
+			<if test="tid != null and tid != ''">
+				and b.tid in (${tid})
+			</if>
+		</where>
+		GROUP BY b.bid
+		order by bpopular desc
+	</select>
+	
+	<select id="selectOneBook" resultMap="bookMap">
+		select * from t_book b,t_type t where b.tid=t.tid and b.bid=#{bid}
+	</select>
+	
+	<select id="selectAllType" resultType="type">
+		select * from t_type
+	</select>
+	
+	<insert id="insertOneBook" parameterType="book">
+		insert into t_book (bname,bauthor,tid) 
+		values 
+		(#{bname},#{bauthor},#{type.tid})
+	</insert>
+	
+	<update id="updateOneBook" parameterType="book">
+		update t_book set bname=#{bname},bauthor=#{bauthor},tid=#{type.tid}
+		where
+		bid=#{bid}
+	</update>
+	
+	<delete id="deleteBook">
+		delete from t_book where bid in (${bids})
+	</delete>
+	
+	<delete id="deleteMiddleBook">
+		delete from user_middel_book where bid in (${bid})
+	</delete>
+	
+	<select id="selectSomeBook" resultType="book">
+		select b.* from t_book b,t_user u,user_middel_book m where m.bid=b.bid and m.uid=u.uid and u.uid = #{uid}
+	</select>
+	
+	<delete id="deleteMiddle">
+		delete from user_middel_book where uid=#{uid}
+	</delete>
+
+	<insert id="insertLikeBook">
+		insert into user_middel_book (uid,bid) values
+			<foreach collection="split" separator="," item="split">
+				(#{uid},#{split})
+			</foreach>
+	</insert>
+	
+</mapper>

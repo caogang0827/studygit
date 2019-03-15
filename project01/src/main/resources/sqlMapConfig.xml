@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 标签配置顺序 -->
+	<!-- (properties?,settings?,typeAliases?,typeHandlers?,objectFactory?,
+	objectWrapperFactory?,plugins?,environments?,databaseIdProvider?,mappers?)" -->
+
+<!--各标签含义 -->
+	<!-- 
+		MyBatis主配置文件详解
+		properties（属性）
+		settings（全局配置参数）
+		typeAliases（类型别名）
+		objectFactory（对象工厂）
+		plugins（插件）
+		environments（环境集合属性对象）
+		environment（环境子属性对象）
+		transactionManager（事务管理）
+		dataSource（数据源）
+		mappers（映射器）
+	 -->
+	 
+<!-- 根标签 -->
+<configuration>
+	
+	<!-- 打印底层执行过程，默认是关闭的 -->
+	<settings>
+		<setting name="logImpl" value="STDOUT_LOGGING"/>
+	</settings>
+	
+	<!-- 起别名 -->
+	<typeAliases>
+		<package name="com.cg.entity"/>
+	</typeAliases>
+	
+	<!-- 加载SQL文件 -->
+	<mappers>
+		<mapper resource="com/cg/mapper/BookMapper.xml"/>
+	</mappers>
+
+</configuration>
